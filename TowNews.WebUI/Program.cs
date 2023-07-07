@@ -1,4 +1,9 @@
+using Microsoft.AspNetCore.Identity;
+using TopNews.Core.Entities.User;
 using TopNews.Infrastructure;
+using TopNews.Infrastructure.Context;
+using TopNews.Infrastructure.Initializators;
+using TopNews.Infrastructure.Initializers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +14,12 @@ builder.Services.AddControllersWithViews();
 string connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 //Database context
 builder.Services.AddDbContext(connStr);
+
+// Add InfrastructureServices
+builder.Services.AddInfrasctructureServices();
+
+//builder.Services.AddDefaultIdentity<AppUser>().AddRoles<IdentityRole>()
+//            .AddEntityFrameworkStores<AppDbContext>();
 
 var app = builder.Build();
 
@@ -30,5 +41,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+//await UsersAndRolesInitializers.SeedUserAndRole(app);
+//UserDbInitializer.SeedUsers(userManager);
 
 app.Run();
