@@ -6,7 +6,10 @@ namespace TopNews.WebUI.Controllers
     {
         public IActionResult Index()
         {
-
+            return View();
+        }
+        public IActionResult Login()
+        {
             return View();
         }
     }
