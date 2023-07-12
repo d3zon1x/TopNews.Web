@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using TopNews.Core;
 using TopNews.Core.Entities.User;
 using TopNews.Infrastructure;
 using TopNews.Infrastructure.Context;
@@ -14,6 +15,7 @@ builder.Services.AddControllersWithViews();
 string connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 //Database context
 builder.Services.AddDbContext(connStr);
+builder.Services.AddCoreServices();
 
 // Add InfrastructureServices
 builder.Services.AddInfrasctructureServices();
