@@ -20,7 +20,7 @@ namespace TopNews.Infrastructure.Initializators
                 var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
                 UserManager<AppUser> userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
-                if(userManager.FindByEmailAsync("admin@gmail.com").Result == null)
+                if(userManager.FindByEmailAsync("admin@gmail.com").Result == null)  
                 {
                     AppUser admin = new AppUser()
                     {

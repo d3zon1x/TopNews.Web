@@ -1,0 +1,73 @@
+﻿@using TopNews.Core.DTOS.User;
+@model List<UsersDTO> 
+
+@{
+    <link rel="stylesheet" href="~/dashboard/plugins/jsgrid/jsgrid.min.css">
+    <link rel="stylesheet" href="~/dashboard/plugins/jsgrid/jsgrid-theme.min.css">
+}
+
+<div class="content-wrapper">
+    <!-- Main content -->
+     <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Users</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Users</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Users</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example2" class="table table-bordered table-hover">
+                  <thead>
+                  <tr>
+                    <th>Role</th>
+                    <th>Name</th>
+                    <th>Lastname</th>
+                    <th>Mail</th>
+                    @*<th>Is confirmed</th>*@
+                  </tr>
+                  </thead>
+                  <tbody>
+                      @foreach (var user in Model)
+    {
+                  <tr>
+                    <td>@user.Role</td>
+                    <td>@user.FirstName</td>
+                    <td>@user.LastName</td>
+                    <td>@user.Email</td>
+                    @*<td>    </td>*@
+                  </tr>
+    }
+                  
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+    <!-- /.content -->
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+</div>

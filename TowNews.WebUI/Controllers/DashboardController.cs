@@ -58,5 +58,10 @@ namespace TopNews.WebUI.Controllers
             await _userService.SingOutUserAsync();
             return RedirectToAction(nameof(Login));
         }
+        public async Task<IActionResult> GetAll()
+        {
+            var result  = await _userService.GetAllAsync();
+            return View(result.Payload);
+        }
     }
 }

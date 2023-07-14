@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +16,13 @@ namespace TopNews.Core.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IMapper _mapper;
 
-        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _mapper = mapper;
         }
         public async Task<ServiceResponse> SingOutUserAsync()
         {
@@ -26,6 +31,26 @@ namespace TopNews.Core.Services
             {
                 Success = true,
                 Message = "Singed out successfully"
+            };
+        }
+
+        public async Task<ServiceResponse> GetAllAsync()
+        {
+            List<AppUser> users = await _userManager.Users.ToListAsync();
+
+            List<UsersDTO> mappedUsers = users.Select(u => _mapper.Map<AppUser, UsersDTO>(u)).ToList();
+
+            foreach (var user in users)
+            {
+                var index = users.IndexOf(user);
+                mappedUsers[index].Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+            }            
+
+            return new ServiceResponse
+            {
+                Success = true,
+                Message = "All users loaded",
+                Payload = mappedUsers
             };
         }
 
@@ -42,7 +67,7 @@ namespace TopNews.Core.Services
             }
             else
             {
-                SignInResult result = await _signInManager.PasswordSignInAsync(user, model.password, model.rememberMe, lockoutOnFailure: true);
+                var result = await _signInManager.PasswordSignInAsync(user, model.password, model.rememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, model.rememberMe);
