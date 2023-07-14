@@ -24,6 +24,11 @@ namespace TopNews.WebUI.Controllers
         [AllowAnonymous]// GET
         public IActionResult Login()
         {
+            var user =  HttpContext.User.Identity.IsAuthenticated;
+            if (user)
+            {
+                return RedirectToAction(nameof(Index));
+            }
             return View();
         }
         [AllowAnonymous]// POST
@@ -47,7 +52,7 @@ namespace TopNews.WebUI.Controllers
             ViewBag.AuthError = validationResult.Errors[0];
             return View(model);
         }
-        
+        [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await _userService.SingOutUserAsync();

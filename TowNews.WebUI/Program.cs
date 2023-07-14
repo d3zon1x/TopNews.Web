@@ -38,7 +38,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStatusCodePagesWithRedirects("/Error/{0}");
 
 app.MapControllerRoute(
     name: "default",
