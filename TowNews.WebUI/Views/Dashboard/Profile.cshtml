@@ -1,0 +1,119 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using TopNews.Core.DTOS.User;
+@using TopNews.Core.Entities.User;
+@using TopNews.WebUI.Models.ViewModels;
+@inject UserManager<AppUser> UserManager;
+@model UpdateProfileVM
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var email = await UserManager.GetEmailAsync(user);
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>General Form</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Profile</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-6">
+                    <!-- general form elements -->
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <h3 class="card-title">User profile</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">First name</label>
+                                    <input name="FirstName" type="text" class="form-control" id="exampleInputEmail1" placeholder="name" value="@user.FirstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Last name</label>
+                                    <input name="LastName" type="text" class="form-control" id="exampleInputPassword1" placeholder="surname" value="@user.LastName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Email</label>
+                                    <input name="Email" type="text" class="form-control" id="exampleInputPassword1" placeholder="email" value="@user.Email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Phone number</label>
+                                    <input name="PhoneNumber" type="text" class="form-control" id="exampleInputPassword1" placeholder="phone" value="@user.PhoneNumber" required>
+                                </div>
+                            </div>
+                            <!-- /.card-body -->
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card -->
+                    <!-- /.card -->
+
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <div class="col-md-6">
+                    <!-- Form Element sizes -->
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">User password</h3>
+                        </div>
+                        @if (@ViewBag.UpdatePasswordError != null)
+                        {
+                            <span class="text-danger mt-3">@ViewBag.UpdatePasswordError</span>
+                        }
+                        <form method="post" asp-action="UpdatePassword">
+                            <div class="card-body">
+                                <input type="hidden" name="Email" asp-for="=@email" value=@email />
+                                <div class="form-group">
+                                    <label for="Password">Old Password</label>
+                                    <input type="password" asp-for="@Model.UserPassword.OldPassword" name="OldPassword" class="form-control" placeholder="Old password" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="Password">New Password</label>
+                                    <input type="password" asp-for="@Model.UserPassword.NewPassword" name="NewPassword" class="form-control" placeholder="New Password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ConfirmPassword">Confirm Password</label>
+                                    <input type="password" name="ConfirmPassword" asp-for="@Model.UserPassword.ConfirmPassword" class="form-control" placeholder="Confirm Password">
+                                </div>
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-danger">Update</button>
+                            </div>
+                        </form>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                    <!-- /.card -->
+                </div>
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

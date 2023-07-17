@@ -5,6 +5,7 @@ using TopNews.Core.DTOS.User;
 using TopNews.Core.Entities.User;
 using TopNews.Core.Services;
 using TopNews.Core.Validation.User;
+using TopNews.WebUI.Models.ViewModels;
 
 namespace TopNews.WebUI.Controllers
 {
@@ -63,5 +64,33 @@ namespace TopNews.WebUI.Controllers
             var result  = await _userService.GetAllAsync();
             return View(result.Payload);
         }
+        public async Task<IActionResult> Profile(string Id)
+        {
+            var result = await _userService.GetUserByIdAsync(Id);
+            if (result.Success)
+            {
+                UpdateProfileVM profile = new UpdateProfileVM()
+                {
+                    UserInfo = (UpdateUserDTO)result.Payload
+                };
+                return View(profile);
+            }
+            return View();
+        }
+        public async Task<IActionResult> UpdatePassword(UpdatePasswordDTO pass)
+        {
+            var id = pass.Id;
+            //var user = await _userService.GetUserByIdAsync(pass.Id);
+            if(pass.NewPassword == pass.ConfirmPassword)
+            {
+                //_userService.ChangePasswordAsync(user, pass.OldPassword, pass.NewPassword);
+            }
+            return View();
+        }
+        //public async Task<IActionResult> UpdatePassword(UpdateUserDTO user)
+        //{
+        //    var firstname = user.FirstName;
+        //    return View();
+        //}
     }
 }

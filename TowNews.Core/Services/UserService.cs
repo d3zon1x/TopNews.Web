@@ -33,6 +33,24 @@ namespace TopNews.Core.Services
                 Message = "Singed out successfully"
             };
         }
+        public async Task<ServiceResponse> ChangePasswordAsync(AppUser user, string oldPassword, string newPassword)
+        {
+            var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+            if (result.Succeeded)
+            {
+                return new ServiceResponse
+                {
+                    Success = true,
+                    Message = "Password has changed successfully"
+                };
+            }
+            return new ServiceResponse
+            {
+                Success = false,
+                Message = "Error to change password"
+            };
+
+        }
 
         public async Task<ServiceResponse> GetAllAsync()
         {
@@ -99,6 +117,29 @@ namespace TopNews.Core.Services
                     Message = "Something went wrong :( ."
                 };
             }
+        }
+        public async Task<ServiceResponse> GetUserByIdAsync(string Id)
+        {
+            var user = await _userManager.FindByIdAsync(Id);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "user or password incorrect!"
+                };
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var mappedUser = _mapper.Map<AppUser, UpdateUserDTO>(user);
+            mappedUser.Role = roles[0];
+
+            return new ServiceResponse
+            {
+                Success = true,
+                Message = "User succesfully.",
+                Payload = mappedUser
+            };
         }
     }
 }
