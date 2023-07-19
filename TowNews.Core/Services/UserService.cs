@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TopNews.Core.DTOS.User;
 using TopNews.Core.Entities.User;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TopNews.Core.Services
 {
@@ -69,6 +70,37 @@ namespace TopNews.Core.Services
             };
 
         }
+        public async Task<ServiceResponse> ChangeUserAsync(UpdateUserDTO model)
+        {
+            var user = await _userManager.FindByIdAsync(model.Id);
+            if (user == null) 
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "null user."
+                };
+            }
+            
+
+            IdentityResult result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+
+                return new ServiceResponse
+                {
+                    Success = true,
+                    Message = "Password has changed successfully"
+                };
+            }
+
+            return new ServiceResponse
+            {
+                Success = false,
+                Message = "Errors to update user"
+            };
+        }
+
 
         public async Task<ServiceResponse> GetAllAsync()
         {

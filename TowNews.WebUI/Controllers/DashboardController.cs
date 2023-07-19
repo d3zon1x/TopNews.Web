@@ -99,10 +99,29 @@ namespace TopNews.WebUI.Controllers
             return View();
 
         }
-        //public async Task<IActionResult> UpdatePassword(UpdateUserDTO user)
-        //{
-        //    var firstname = user.FirstName;
-        //    return View();
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateUser(UpdateUserDTO user)
+        {
+            //var validator = new UpdatePasswordVilidation();
+            //var validationReuslt = await validator.ValidateAsync(pass);
+            //if (validationReuslt.IsValid)
+            //{
+            //var result = await _userService.ChangePasswordAsync(pass.Id, pass.OldPassword, pass.NewPassword);
+            //if (result.Success)
+            //    {
+            //        return View(result.Payload);
+            //    }
+
+            //    ViewBag.UpdatePasswordError = result.Payload;
+            //    return View();
+            //}
+            //ViewBag.UpdatePasswordError = validationReuslt.Errors[0];
+
+            var result = user.FirstName;
+
+            return View();
+
+        }
     }
 }
