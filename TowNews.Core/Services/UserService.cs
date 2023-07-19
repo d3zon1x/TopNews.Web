@@ -33,21 +33,39 @@ namespace TopNews.Core.Services
                 Message = "Singed out successfully"
             };
         }
-        public async Task<ServiceResponse> ChangePasswordAsync(AppUser user, string oldPassword, string newPassword)
+        public async Task<ServiceResponse> ChangePasswordAsync(string id, string oldPassword, string newPassword)
         {
-            var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
-            if (result.Succeeded)
+            var user = await _userManager.FindByIdAsync(id);
+            if (user != null)
             {
+                IdentityResult result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignOutAsync();
+                    return new ServiceResponse
+                    {
+                        Success = true,
+                        Message = "Password has changed successfully"
+                    };
+                }
+                List<IdentityError> errors = result.Errors.ToList();
+                string error = "";
+                foreach (var err in errors)
+                {
+                    error = error + err.Description.ToList();
+                }
                 return new ServiceResponse
                 {
-                    Success = true,
-                    Message = "Password has changed successfully"
+                    Success = false,
+                    Message = "Errors.",
+                    Payload = error
                 };
             }
+
             return new ServiceResponse
             {
                 Success = false,
-                Message = "Error to change password"
+                Message = "Error. User null"
             };
 
         }
@@ -130,15 +148,31 @@ namespace TopNews.Core.Services
                 };
             }
 
-            var roles = await _userManager.GetRolesAsync(user);
             var mappedUser = _mapper.Map<AppUser, UpdateUserDTO>(user);
-            mappedUser.Role = roles[0];
 
             return new ServiceResponse
             {
                 Success = true,
                 Message = "User succesfully.",
                 Payload = mappedUser
+            };
+        }
+        public async Task<ServiceResponse> GetRawUserByIdAsync(string Id)
+        {
+            var user = await _userManager.FindByIdAsync(Id);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "user or password incorrect!"
+                };
+            }
+            return new ServiceResponse
+            {
+                Success = true,
+                Message = "User succesfully.",
+                Payload = user
             };
         }
     }

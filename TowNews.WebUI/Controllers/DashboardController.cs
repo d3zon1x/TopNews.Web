@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TopNews.Core.DTOS.User;
@@ -77,15 +78,26 @@ namespace TopNews.WebUI.Controllers
             }
             return View();
         }
-        public async Task<IActionResult> UpdatePassword(UpdatePasswordDTO pass)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(UpdatePasswordDTO pass)
         {
-            var id = pass.Id;
-            //var user = await _userService.GetUserByIdAsync(pass.Id);
-            if(pass.NewPassword == pass.ConfirmPassword)
+            var validator = new UpdatePasswordVilidation();
+            var validationReuslt = await validator.ValidateAsync(pass);
+            if (validationReuslt.IsValid)
             {
-                //_userService.ChangePasswordAsync(user, pass.OldPassword, pass.NewPassword);
+                var result = await _userService.ChangePasswordAsync(pass.Id, pass.OldPassword, pass.NewPassword);
+                if (result.Success)
+                {
+                    return View(result.Payload); 
+                }
+
+                ViewBag.UpdatePasswordError = result.Payload;
+                return View();
             }
+            ViewBag.UpdatePasswordError = validationReuslt.Errors[0];
             return View();
+
         }
         //public async Task<IActionResult> UpdatePassword(UpdateUserDTO user)
         //{

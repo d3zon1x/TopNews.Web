@@ -20,7 +20,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Home</a></li>
                         <li class="breadcrumb-item active">Profile</li>
                     </ol>
                 </div>
@@ -83,7 +83,8 @@
                         {
                             <span class="text-danger mt-3">@ViewBag.UpdatePasswordError</span>
                         }
-                        <form method="post" asp-action="UpdatePassword">
+                        <form method="post" asp-action="Profile">
+                            @*@Model.UserPassword.Id = @user.Id;*@
                             <div class="card-body">
                                 <input type="hidden" name="Email" asp-for="=@email" value=@email />
                                 <div class="form-group">
@@ -97,6 +98,9 @@
                                 <div class="form-group">
                                     <label for="ConfirmPassword">Confirm Password</label>
                                     <input type="password" name="ConfirmPassword" asp-for="@Model.UserPassword.ConfirmPassword" class="form-control" placeholder="Confirm Password">
+                                </div>
+                                <div class="form-group" style="display:none">
+                                    <input type="password" name="Id" asp-for="@Model.UserPassword.Id" class="form-control" placeholder="Confirm Password" value="@user.Id">
                                 </div>
                             </div>
                             <!-- /.card-body -->
