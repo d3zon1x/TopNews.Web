@@ -248,5 +248,33 @@ namespace TopNews.Core.Services
             };
 
         }
+        public async Task<ServiceResponse> DeleteUserAsync(string id)
+        {
+            AppUser user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "unknown user"
+                };
+            }
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded) {
+                return new ServiceResponse
+                {
+                    Success = true,
+                    Message = "User deleted succesfully!"
+                };
+            }
+            else
+            {
+                return new ServiceResponse {
+                    Success = false,
+                    Message = "something went wrong",
+                    Payload = result.Errors 
+                };
+            }
+        }
     }
 }

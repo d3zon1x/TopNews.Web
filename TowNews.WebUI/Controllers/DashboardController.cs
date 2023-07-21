@@ -149,5 +149,22 @@ namespace TopNews.WebUI.Controllers
             ViewBag.CreateUserValidationError = validationReuslt.Errors[0];
             return View();
         }
+        public async Task<IActionResult> Delete(string id)
+        {
+            var result = await _userService.GetUserByIdAsync(id);
+            return View(result.Payload);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(DeleteUserDTO modal)
+        {
+            var result = await _userService.DeleteUserAsync(modal.Id);
+            if (result.Success)
+            {
+                return RedirectToAction(nameof(GetAll));
+            }
+            ViewBag.CreateUserError = result.Errors.Count() > 0 ? ((IdentityError)result.Errors.First()).Description : result.Message;
+            return View();
+        }
     }
 }

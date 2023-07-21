@@ -1,9 +1,13 @@
-﻿@using TopNews.Core.DTOS.User;
+﻿@using Microsoft.AspNetCore.Identity;
+@using TopNews.Core.DTOS.User;
+@using TopNews.Core.Entities.User;
 @model List<UsersDTO>
-
+@inject UserManager<AppUser> UserManager
 @{
     <link rel="stylesheet" href="~/dashboard/plugins/jsgrid/jsgrid.min.css">
     <link rel="stylesheet" href="~/dashboard/plugins/jsgrid/jsgrid-theme.min.css">
+    var _user = await UserManager.GetUserAsync(User);
+    var email = await UserManager.GetEmailAsync(_user);
 }
 
 <section class="content-wrapper">
@@ -44,6 +48,11 @@
                                         <th>Mail</th>
                                         <th>Is confirmed</th>
                                         <th>LockedOut</th>
+                                         @if (@User.IsInRole("Administrator"))
+                                        {
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+                                        }
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -64,6 +73,11 @@
                                                 <td>-</td>
                                             }
                                             <td>@user.LockedOut</td>
+                                            @if (@User.IsInRole("Administrator") && user.Email != email)
+                                            {
+                                                <td><a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-block btn-warning btn-sm">Edit</a></td>
+                                                <td><a asp-controller="Dashboard" asp-action="Delete" asp-route-id="@user.Id" class="btn btn-block btn-danger btn-sm">Delete</a></td>
+                                            }
                                         </tr>
                                     }
                             </table>
