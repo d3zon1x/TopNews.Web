@@ -103,25 +103,51 @@ namespace TopNews.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateUser(UpdateUserDTO user)
         {
-            //var validator = new UpdatePasswordVilidation();
-            //var validationReuslt = await validator.ValidateAsync(pass);
-            //if (validationReuslt.IsValid)
-            //{
-            //var result = await _userService.ChangePasswordAsync(pass.Id, pass.OldPassword, pass.NewPassword);
-            //if (result.Success)
-            //    {
-            //        return View(result.Payload);
-            //    }
+            var validator = new UpdateUserValidation();
+            var validationReuslt = await validator.ValidateAsync(user);
+            if (validationReuslt.IsValid)
+            {
+                //var result = await _userService.ChangePasswordAsync(pass.Id, pass.OldPassword, pass.NewPassword);
+                //if (result.Success)
+                //{
+                //    return View(result.Payload);
+                //}
 
-            //    ViewBag.UpdatePasswordError = result.Payload;
-            //    return View();
-            //}
-            //ViewBag.UpdatePasswordError = validationReuslt.Errors[0];
+                //ViewBag.UpdatePasswordError = result.Payload;
+                //return View();
+            }
+            ViewBag.UpdatePasswordError = validationReuslt.Errors[0];
 
             var result = user.FirstName;
 
             return View();
 
+        }
+        public async Task<IActionResult> AddNew()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddNew(CreateUserDTO model)
+        {
+            var validator = new CreateUserValidation();
+            var validationReuslt = await validator.ValidateAsync(model);
+            if (validationReuslt.IsValid)
+            {
+                var result = await _userService.AddNewUserAsync(model);
+                if (result.Success)
+                {
+                    return RedirectToAction(nameof(GetAll));
+                }
+                else
+                {
+                    ViewBag.CreateUserError = result.Payload;
+                    return View();
+                }
+            }
+            ViewBag.CreateUserValidationError = validationReuslt.Errors[0];
+            return View();
         }
     }
 }
