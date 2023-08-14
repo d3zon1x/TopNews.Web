@@ -154,17 +154,20 @@ namespace TopNews.WebUI.Controllers
             var result = await _userService.GetUserByIdAsync(id);
             return View(result.Payload);
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteUser(DeleteUserDTO modal)
+        public async Task<IActionResult> DeleteUser(string id)
         {
-            var result = await _userService.DeleteUserAsync(modal.Id);
+            var result = await _userService.DeleteUserAsync(id);
             if (result.Success)
             {
                 return RedirectToAction(nameof(GetAll));
             }
             ViewBag.CreateUserError = result.Errors.Count() > 0 ? ((IdentityError)result.Errors.First()).Description : result.Message;
-            return View();
+            return RedirectToAction(nameof(GetAll));
+        }
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            var result = await _userService.ConfirmEmailAsync(userId, token);
+            return RedirectToAction(nameof(Login));
         }
     }
 }

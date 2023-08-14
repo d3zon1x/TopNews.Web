@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,12 +20,16 @@ namespace TopNews.Core.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IMapper _mapper;
+        private readonly EmailService _emailService;
+        private readonly IConfiguration _configuration;
 
-        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper)
+        public UserService(IConfiguration configuration, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, EmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
+            _configuration = configuration;
+            _emailService = emailService;
         }
         public async Task<ServiceResponse> SingOutUserAsync()
         {
@@ -213,11 +219,15 @@ namespace TopNews.Core.Services
             {
                 //AppUser mappedUser = User.Select(u => _mapper.Map<AppUser, UsersDTO>(u)).ToList();
                 AppUser mappedUser = _mapper.Map<CreateUserDTO, AppUser>(user);
-
                 var result = await _userManager.CreateAsync(mappedUser);
                 if (result.Succeeded)
                 {
                     _userManager.AddToRoleAsync(mappedUser, user.Role).Wait();
+
+                    //  Email sender
+                    //await _emailService.SendEmail(user.Email, "Welcome", "Welcome to our site");
+                    await SendConfirmationEmailAsync(mappedUser);
+
                     return new ServiceResponse
                     {
                         Success = true,
@@ -248,6 +258,46 @@ namespace TopNews.Core.Services
             };
 
         }
+        public async Task SendConfirmationEmailAsync(AppUser user)
+        {
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var encodedToken = Encoding.UTF8.GetBytes(token);
+            var validEmailToken = WebEncoders.Base64UrlEncode(encodedToken);
+
+            string url = $"{_configuration["HostSetting:URL"]}/Dashboard/ConfirmEmail?userId={user.Id}&token={validEmailToken}";
+            string emailBody = $"<h1>Confirm your email please.</h1><a href='{url}'>Confirm now</a>";
+            await _emailService.SendEmail(user.Email, "TopNews Email confirmation", emailBody);
+        }
+        public async Task<ServiceResponse> ConfirmEmailAsync(string userId, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "unknown user"
+                };
+            }
+            var decodedToken = WebEncoders.Base64UrlDecode(token);
+            string normalToken = Encoding.UTF8.GetString(decodedToken);
+            var result = await _userManager.ConfirmEmailAsync(user, normalToken);
+            if (result.Succeeded)
+            {
+                return new ServiceResponse
+                {
+                    Success = true,
+                    Message = "User`s email confirmed succesfully"
+                };
+            }
+            return new ServiceResponse
+            {
+                Success = false,
+                Message = "User`s email not confirmed",
+                Payload = result.Errors.Select(e=>e.Description)
+            };
+        }
+
         public async Task<ServiceResponse> DeleteUserAsync(string id)
         {
             AppUser user = await _userManager.FindByIdAsync(id);
@@ -272,7 +322,7 @@ namespace TopNews.Core.Services
                 return new ServiceResponse {
                     Success = false,
                     Message = "something went wrong",
-                    Payload = result.Errors 
+                    Payload = result.Errors .Select(e=>e.Description)
                 };
             }
         }

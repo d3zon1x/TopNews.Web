@@ -46,7 +46,7 @@ app.UseStatusCodePagesWithRedirects("/Error/{0}");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-//await UsersAndRolesInitializers.SeedUserAndRole(app);
+await UsersAndRolesInitializers.SeedUserAndRole(app);
 //UserDbInitializer.SeedUsers(userManager);
 
 app.Run();
