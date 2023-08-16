@@ -164,10 +164,44 @@ namespace TopNews.WebUI.Controllers
             ViewBag.CreateUserError = result.Errors.Count() > 0 ? ((IdentityError)result.Errors.First()).Description : result.Message;
             return RedirectToAction(nameof(GetAll));
         }
+        [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
             var result = await _userService.ConfirmEmailAsync(userId, token);
             return RedirectToAction(nameof(Login));
+        }
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword()
+        {
+            return View();
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var result = await _userService.ForgotPasswordAsync(email);
+            if (result.Success)
+            {
+                ViewBag.AuthError = "Check your email.";
+                return RedirectToAction(nameof(Login));
+            }
+            return View();
+        }
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(string email, string token)
+        {
+            ViewBag.Email = email;
+            ViewBag.Token = token;
+            return View();
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO model)
+        {
+            var result = await _userService.ResetPasswordAsync(model);
+            ViewBag.AuthError = result.Message;
+            return View(nameof(Login));
         }
     }
 }

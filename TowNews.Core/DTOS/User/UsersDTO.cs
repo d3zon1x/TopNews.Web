@@ -12,7 +12,7 @@ namespace TopNews.Core.DTOS.User
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public bool IsEmailConfirmed { get; set; } = false;
+        public bool EmailConfirmed { get; set; } = false;
         public string LockedOut { get; set; } = string.Empty;
         public string Role { get; set;} = string.Empty;
 

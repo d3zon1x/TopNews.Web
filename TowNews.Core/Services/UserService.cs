@@ -170,7 +170,7 @@ namespace TopNews.Core.Services
                 return new ServiceResponse
                 {
                     Success = false,
-                    Message = "Something went wrong :( ."
+                    Message = "Something went wrong during login :( ."
                 };
             }
         }
@@ -219,7 +219,7 @@ namespace TopNews.Core.Services
             {
                 //AppUser mappedUser = User.Select(u => _mapper.Map<AppUser, UsersDTO>(u)).ToList();
                 AppUser mappedUser = _mapper.Map<CreateUserDTO, AppUser>(user);
-                var result = await _userManager.CreateAsync(mappedUser);
+                var result = await _userManager.CreateAsync(mappedUser, user.Password);
                 if (result.Succeeded)
                 {
                     _userManager.AddToRoleAsync(mappedUser, user.Role).Wait();
@@ -254,7 +254,7 @@ namespace TopNews.Core.Services
             return new ServiceResponse
             {
                 Success = false,
-                Message = "Something went wrong :( ."
+                Message = "Something went wrong during adding user :( ."
             };
 
         }
@@ -321,10 +321,63 @@ namespace TopNews.Core.Services
             {
                 return new ServiceResponse {
                     Success = false,
-                    Message = "something went wrong",
+                    Message = "something went wrong during deleting user",
                     Payload = result.Errors .Select(e=>e.Description)
                 };
             }
+        }
+        public async Task<ServiceResponse> ForgotPasswordAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "unknown user"
+                };
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedToken = Encoding.UTF8.GetBytes(token);
+            var validEmailToken = WebEncoders.Base64UrlEncode(encodedToken);
+
+            string url = $"{_configuration["HostSetting:URL"]}/Dashboard/ResetPassword?email={email}&token={validEmailToken}";
+            string emailBody = $"<h1>Follow the following instructions to reset password.</h1><a href='{url}'>Reset password</a>";
+            await _emailService.SendEmail(email, "TopNews Password reset", emailBody);
+            return new ServiceResponse
+            {
+                Success = true,
+                Message = "email sent"
+            };
+        }
+        public async Task<ServiceResponse> ResetPasswordAsync(ResetPasswordDTO model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "unknown user"
+                };
+            }
+            var decodedToken = WebEncoders.Base64UrlDecode(model.Token);
+            string normalToken = Encoding.UTF8.GetString(decodedToken);
+            var result = await _userManager.ResetPasswordAsync(user, normalToken, model.Password);
+
+            if (result.Succeeded)
+            {
+                return new ServiceResponse
+                {
+                    Success = true,
+                    Message = "Passwprd reseted succesfully!"
+                };
+            }
+            return new ServiceResponse
+            {
+                Success = false,
+                Message = "Password didn`t reset :( ." 
+            };
         }
     }
 }
