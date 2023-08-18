@@ -199,6 +199,11 @@ namespace TopNews.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordDTO model)
         {
+            if (model.Password != model.ConfirmPassword)
+            {
+                ViewBag.AuthError = "New password must be equel to confirmed password";
+                return View();
+            }
             var result = await _userService.ResetPasswordAsync(model);
             ViewBag.AuthError = result.Message;
             return View(nameof(Login));

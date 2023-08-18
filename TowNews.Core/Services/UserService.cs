@@ -370,7 +370,7 @@ namespace TopNews.Core.Services
                 return new ServiceResponse
                 {
                     Success = true,
-                    Message = "Passwprd reseted succesfully!"
+                    Message = "Password reseted succesfully!"
                 };
             }
             return new ServiceResponse
