@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TopNews.Core.DTOS.User;
 using TopNews.Core.Entities.User;
 using TopNews.Core.Services;
@@ -182,8 +183,8 @@ namespace TopNews.WebUI.Controllers
             var result = await _userService.ForgotPasswordAsync(email);
             if (result.Success)
             {
-                ViewBag.AuthError = "Check your email.";
-                return RedirectToAction(nameof(Login));
+                ViewBag.AuthError = "We send you email to reset the password.";
+                return View(nameof(Login));
             }
             return View();
         }
@@ -207,6 +208,29 @@ namespace TopNews.WebUI.Controllers
             var result = await _userService.ResetPasswordAsync(model);
             ViewBag.AuthError = result.Message;
             return View(nameof(Login));
+        }
+        private async Task LoadRoles()
+        {
+            var result = await _userService.GetAllRoles();
+            /*@ViewBag.RoleList = new SelectList((System.Collections.IEnumerable)result, nameof(IdentityRole.Id),nameof(IdentityRole.Name));*/
+            @ViewBag.RoleList = result;
+        }
+        public async Task<IActionResult> Edit(string id)
+        {
+            await LoadRoles();
+            var user = await _userService.GetUserForEditAsync(id);
+            if (user.Success)
+            {
+                return View(user.Payload);
+            }
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditUserDTO model)
+        {
+            await LoadRoles();
+            return View();
         }
     }
 }

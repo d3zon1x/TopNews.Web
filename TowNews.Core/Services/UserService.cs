@@ -22,14 +22,16 @@ namespace TopNews.Core.Services
         private readonly IMapper _mapper;
         private readonly EmailService _emailService;
         private readonly IConfiguration _configuration;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserService(IConfiguration configuration, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, EmailService emailService)
+        public UserService(RoleManager<IdentityRole> roleManager, IConfiguration configuration, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, EmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
             _configuration = configuration;
             _emailService = emailService;
+            _roleManager = roleManager;
         }
         public async Task<ServiceResponse> SingOutUserAsync()
         {
@@ -377,6 +379,50 @@ namespace TopNews.Core.Services
             {
                 Success = false,
                 Message = "Password didn`t reset :( ." 
+            };
+        }
+        public async Task<List<IdentityRole>> GetAllRoles()
+        {
+            List<IdentityRole> roles = await _roleManager.Roles.ToListAsync();
+            return roles;
+        }
+        public async Task<ServiceResponse> EditUser(EditUserDTO model)
+        {
+            var user = await _userManager.FindByIdAsync(model.Id);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "unknown user"
+                };
+            }
+            _userManager.UpdateAsync(user);
+            return new ServiceResponse
+            {
+                Success = false,
+                Message = "User wasn`t updated ."
+            };
+        }
+        public async Task<ServiceResponse> GetUserForEditAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "unknown user"
+                };
+            }
+
+            EditUserDTO mappedUser = _mapper.Map<AppUser, EditUserDTO>(user);
+
+            return new ServiceResponse
+            {
+                Success = true,
+                Message = "User mapped.",
+                Payload = mappedUser
             };
         }
     }
