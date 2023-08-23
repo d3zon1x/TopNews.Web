@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TopNews.Core.AutoMapper.User;
+using TopNews.Core.DTOS.Category;
+using TopNews.Core.Interfaces;
 using TopNews.Core.Services;
 
 namespace TopNews.Core
@@ -15,6 +17,7 @@ namespace TopNews.Core
         {
             services.AddTransient<UserService>();
             services.AddTransient<EmailService>();
+            services.AddScoped<ICategoryService, CategoryService>();
         }
         public static void AddMapping(this IServiceCollection services)
         {
