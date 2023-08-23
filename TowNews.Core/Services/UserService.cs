@@ -394,14 +394,48 @@ namespace TopNews.Core.Services
                 return new ServiceResponse
                 {
                     Success = false,
-                    Message = "unknown user"
+                    Message = "User not found."
                 };
             }
-            _userManager.UpdateAsync(user);
+
+            if (user.Email != model.Email)
+            {
+                user.EmailConfirmed = false;
+                user.Email = model.Email;
+                user.UserName = model.Email;
+                await SendConfirmationEmailAsync(user);
+            }
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.PhoneNumber = model.PhoneNumber;
+
+            var roles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, roles);
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, model.Role);
+
+                return new ServiceResponse
+                {
+                    Message = "User successfully updated.",
+                    Success = true
+                };
+            }
+
+            List<IdentityError> errorList = result.Errors.ToList();
+            string errors = "";
+
+            foreach (var error in errorList)
+            {
+                errors = errors + error.Description.ToString();
+            }
             return new ServiceResponse
             {
-                Success = false,
-                Message = "User wasn`t updated ."
+                Message = errors,
+                Success = false
             };
         }
         public async Task<ServiceResponse> GetUserForEditAsync(string id)

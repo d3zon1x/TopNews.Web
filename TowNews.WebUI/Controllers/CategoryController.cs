@@ -18,11 +18,6 @@ namespace TopNews.WebUI.Controllers
             var result = await _categoryService.GetAll();
             return View(result);
         }
-        public async Task<IActionResult> GetAll()
-        {
-            var result = await _categoryService.GetAll();
-            return View(result);
-        }
         public async Task<IActionResult> AddNew()
         {
             return View();

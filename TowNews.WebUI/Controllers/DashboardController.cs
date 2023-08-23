@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -225,12 +226,21 @@ namespace TopNews.WebUI.Controllers
             }
             return View();
         }
-        [HttpPost]
         [ValidateAntiForgeryToken]
+        [HttpPost]
         public async Task<IActionResult> Edit(EditUserDTO model)
         {
+            var validator = new EditUserValidation();
+            var validationResult = await validator.ValidateAsync(model);
+            if (validationResult.IsValid)
+            {
+                var result = await _userService.EditUser(model);
+                return View(nameof(Index));
+            }
+
             await LoadRoles();
-            return View();
+            ViewBag.AuthError = validationResult.Errors[0];
+            return View(nameof(Edit));
         }
     }
 }

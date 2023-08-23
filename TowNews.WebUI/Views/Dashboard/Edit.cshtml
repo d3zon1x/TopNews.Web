@@ -16,7 +16,7 @@
                         <h5>Update profile information</h5>
                     </div>
                     <div class="card-body">
-                        <form role="form text-left" method="post" asp-controller="Admin" asp-action="EditUser">
+                        <form role="form text-left" method="post" asp-controller="Dashboard" asp-action="Edit">
                             @if (@ViewBag.AuthError != null)
                             {
                                 <span class="text-danger">@ViewBag.AuthError</span>
