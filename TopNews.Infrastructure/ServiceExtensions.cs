@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TopNews.Core.AutoMapper.Categories;
 using TopNews.Core.Entities.User;
 using TopNews.Core.Interfaces;
 using TopNews.Infrastructure.Context;
@@ -44,6 +45,7 @@ namespace TopNews.Infrastructure
         public static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddAutoMapper(typeof(AutoMapperCategoryProfile));
         }
     }
 }
