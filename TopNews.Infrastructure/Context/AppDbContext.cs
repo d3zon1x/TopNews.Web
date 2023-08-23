@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TopNews.Core.Entities.User;
+using TopNews.Infrastructure.Initializers;
 
 namespace TopNews.Infrastructure.Context
 {
@@ -16,11 +17,12 @@ namespace TopNews.Infrastructure.Context
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)  { }
 
         public DbSet<AppUser> AppUser { get; set; }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
 
-            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Name = "Admin", NormalizedName = "Admin".ToUpper() });
+            builder.SeedCategoryAnsPosts();
         }
+
     }
 }

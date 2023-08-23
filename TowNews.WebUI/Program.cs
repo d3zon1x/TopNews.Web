@@ -23,6 +23,7 @@ builder.Services.AddInfrasctructureServices();
 //builder.Services.AddDefaultIdentity<AppUser>().AddRoles<IdentityRole>()
 //            .AddEntityFrameworkStores<AppDbContext>();
 builder.Services.AddMapping();
+builder.Services.AddRepositories();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
