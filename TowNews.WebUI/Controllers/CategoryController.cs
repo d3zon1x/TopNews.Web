@@ -39,5 +39,17 @@ namespace TopNews.WebUI.Controllers
             await _categoryService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
+        public async Task<IActionResult> Edit(int id)
+        {
+            var result = await _categoryService.Get(id);
+            return View(result);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(CategoryDTO model)
+        {
+            await _categoryService.Update(model);
+            return View();
+        }
     }
 }
