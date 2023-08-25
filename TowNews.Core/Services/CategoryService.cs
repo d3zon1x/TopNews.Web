@@ -28,6 +28,14 @@ namespace TopNews.Core.Services
         }
         public async Task Create(CategoryDTO model)
         {
+            var list = await GetAll();
+            foreach (var item in list)
+            {
+                if (item.Name.ToLower() == model.Name.ToLower())
+                {
+                    return;
+                }
+            }
             await _categoryRepo.Insert(_mapper.Map<Category>(model));
             await _categoryRepo.Save();
         }
@@ -50,6 +58,14 @@ namespace TopNews.Core.Services
         }
         public async Task Update(CategoryDTO model)
         {
+            var list = await GetAll();
+            foreach (var item in list)
+            {
+                if (item.Name.ToLower() == model.Name.ToLower())
+                {
+                    return;
+                }
+            }
             await _categoryRepo.Update(_mapper.Map<Category>(model));
             await _categoryRepo.Save();
         }

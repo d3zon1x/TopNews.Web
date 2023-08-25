@@ -49,7 +49,8 @@ namespace TopNews.WebUI.Controllers
         public async Task<IActionResult> Edit(CategoryDTO model)
         {
             await _categoryService.Update(model);
-            return View();
+            return RedirectToAction("Index", "Dashboard");
+            //return View("Index");
         }
     }
 }
