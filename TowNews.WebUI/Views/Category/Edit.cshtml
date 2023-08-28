@@ -15,10 +15,10 @@
                     </div>
                     <div class="card-body">
                         <form role="form text-left" method="post" asp-controller="Category" asp-action="Edit">
-                            @if (@ViewBag.AuthError != null)
-                            {
-                                <span class="text-danger">@ViewBag.AuthError</span>
-                            }
+                                @if (@ViewBag.AuthError != null)
+                                {
+                                    <span class="text-danger mt-3">@ViewBag.AuthError</span>
+                                }
                             <div class="mb-3">
                                 <input asp-for="Id" type="hidden" class="form-control" aria-label="Id" aria-describedby="email-addon" />
                                 <input asp-for="Name" type="text" class="form-control" placeholder="CategoryName" value="@Model.Name">

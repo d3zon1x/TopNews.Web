@@ -12,8 +12,8 @@ using TopNews.Infrastructure.Context;
 namespace TopNews.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230823152158_Init2")]
-    partial class Init2
+    [Migration("20230828145234_Init28.08")]
+    partial class Init2808
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

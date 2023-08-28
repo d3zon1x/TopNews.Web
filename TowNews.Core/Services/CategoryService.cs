@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TopNews.Core.DTOS.Category;
 using TopNews.Core.Entities.Site;
+using TopNews.Core.Entities.Specification;
 using TopNews.Core.Interfaces;
 
 namespace TopNews.Core.Services
@@ -69,6 +70,24 @@ namespace TopNews.Core.Services
             await _categoryRepo.Update(_mapper.Map<Category>(model));
             await _categoryRepo.Save();
         }
-
+        public async Task<ServiceResponse> GetByName(CategoryDTO model)
+        {
+            var result = await _categoryRepo.GetItemBySpec(new CategorySpecification.GetByName(model.Name));
+            if (result != null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = "Category exists."
+                };
+            }
+            var category = _mapper.Map<CategoryDTO>(result);
+            return new ServiceResponse
+            {
+                Success = true,
+                Message = "Category successfully loaded.",
+                Payload = category
+            };
+        }
     }
 }
