@@ -13,7 +13,7 @@ namespace TopNews.Core.Services
 {
     public class CategoryService : ICategoryService
     {
-        private readonly IMapper _mapper;
+        private readonly IMapper _mapper;   
         private readonly IRepository<Category> _categoryRepo;
 
         public CategoryService(IMapper mapper, IRepository<Category> categoryRepo)

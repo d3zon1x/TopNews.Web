@@ -11,5 +11,7 @@ namespace TopNews.Core.Interfaces
     {
         Task<PostDTO?> Get(int id);
         Task<List<PostDTO>> GetByCategory(int id);
+        Task<List<PostDTO>> GetAll();
+        Task CreateAsync(PostDTO model);
     }
 }
