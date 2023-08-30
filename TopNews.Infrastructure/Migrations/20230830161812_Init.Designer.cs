@@ -12,8 +12,8 @@ using TopNews.Infrastructure.Context;
 namespace TopNews.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230828163523_Add_post_entiy")]
-    partial class Add_post_entiy
+    [Migration("20230830161812_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

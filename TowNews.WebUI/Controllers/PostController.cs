@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using TopNews.Core.DTOS.Category;
 using TopNews.Core.DTOS.Post;
 using TopNews.Core.Interfaces;
+using TopNews.Core.Validation.Post;
 
 namespace TopNews.WebUI.Controllers
 {
@@ -23,17 +26,33 @@ namespace TopNews.WebUI.Controllers
         }
         public async Task<IActionResult> AddPost()
         {
+            await LoadCategories();
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddPost(PostDTO model)
         {
-            if (model != null) 
+            var validator = new AddPostValidation();
+            var validationResult = await validator.ValidateAsync(model);
+
+            if (validationResult.IsValid) 
             {
+                var files = HttpContext.Request.Form.Files;
+                model.File = files;
                 await _postService.CreateAsync(model);
+                return RedirectToAction("Index", "Post");
             }
+            ViewBag.Errors = validationResult.Errors[0];
             return View();
+        }
+        private async Task LoadCategories()
+        {
+            ViewBag.CategoryList = new SelectList( 
+                await _categoryService.GetAll(),
+                nameof(CategoryDTO.Id),
+                nameof(CategoryDTO.Name)
+                );
         }
     }
 }
