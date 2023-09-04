@@ -1,8 +1,93 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="~/dashboard/plugins/fontawesome-free/css/all.min.css">
+    <!-- IonIcons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dashboard/css/adminlte.min.css">
 }
+@using TopNews.Core.DTOS.Post;
+@using X.PagedList.Mvc.Core;
+@using X.PagedList.Web.Common;
+@using X.PagedList;
+@model IPagedList<PostDTO>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 mb-5 offset-md-2">
+                    <form method="post" asp-action="Search" asp-controller="Home">
+                        <div class="input-group input-group-lg">
+                            <input type="search" name="searchString" class="form-control form-control-lg" placeholder="Search...">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-lg btn-default">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="row no-gutters">
+
+                                @*<div class="card">*@
+                                @if (item.ImagePath == "Default.png")
+                                {
+                                    <img class="card-img-top" src="~/images/posts/Default.png" alt="Photo">
+                                }
+                                else
+                                {
+                                    <img class="card-img-top" src="~/images/posts/@item.ImagePath" alt="Photo">
+                                }
+                                <div class="card-body px-3">
+                                    <h5 class="card-title">@Html.Raw(item.Title)</h5>
+                                    <p class="card-text">@Html.Raw(item.Description)</p>
+                                    <a asp-controller="Home" asp-route-id="@item.Id" asp-action="ViewMore" class="btn btn-outline-secondary btn-sm">Read More</a>
+                                    @*</div>*@
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
+                    @Html.PagedListPager(Model, page => Url.Action("index", new { page = page }), new PagedListRenderOptions()
+                    {
+                    ActiveLiElementClass = "active",
+                    PageClasses = new[]{ "page-link"},
+                    LiElementClasses=new[] { "page-item" },
+                    UlElementClasses = new[] { "pagination","justify-content-center", "mt-3" },
+                    LinkToNextPageFormat = "Next",
+                    LinkToPreviousPageFormat = "Prev",
+                    MaximumPageNumbersToDisplay = 3,
+                    DisplayLinkToPreviousPage = PagedListDisplayMode.Never,
+                    DisplayLinkToNextPage = PagedListDisplayMode.Never
+                    })
+                </div>
+                @if (Model.Count() <= 0)
+                {
+                    <h2>No posts were found for your query.</h2>
+                }
+            </div>
+        </div>
+@{
+    <script src="~/dashboard/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="~/dashboard/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE -->
+    <script src="~/dashboard/js/adminlte.js"></script>
+
+    <!-- OPTIONAL SCRIPTS -->
+    <script src="~/dashboard/plugins/chart.js/Chart.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <!--<script src="~/dashboard/js/demo.js"></script>-->
+    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+    <script src="~/dashboard/js/pages/dashboard3.js"></script>
+}
