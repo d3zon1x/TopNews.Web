@@ -6,6 +6,24 @@
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
     <link rel="stylesheet" href="~/dashboard/plugins/summernote/summernote-bs4.min.css" />
 }
+<style>
+    .cropper-container {
+        max-width: 100%; /* Ensure the container fits within its parent */
+        border: 1px solid #ccc; /* Add a border or other styling as desired */
+        padding: 20px; /* Add padding to create spacing around the container */
+    }
+
+    /* Style the custom file input as needed */
+    .custom-file {
+        margin-bottom: 10px;
+    }
+
+    /* Style the image container as needed */
+    .img-container {
+        max-width: 100%; /* Ensure the image fits within its container */
+        display: none; /* Hide the container initially */
+    }
+</style>
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -76,11 +94,17 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Image</label>
-                                            <div class=" input-group">
+                                            <div class="input-group">
                                                 <div class="custom-file">
-                                                    <div class="custom-file">
-                                                        <input type="file" id="Image" name="files" asp-for="@Model.File" class="custom-file-input" />
-                                                        <label class="custom-file-label">Coose file...</label>
+                                                    <input type="file" id="Image" name="files" class="custom-file-input" />
+                                                    <label class="custom-file-label">Choose file...</label>
+                                                </div>
+
+                                                <!-- Image container (if needed) -->
+                                                <div class="cropper-container">
+                                                    <div class="img-container" style="display: none;">
+                                                        <img id="cropped-image" alt="Cropped Image">
+                                                        <input type="hidden" id="CroppedImageData" name="CroppedImageData" asp-for="@Model.File" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -105,15 +129,51 @@
 
 @section Scripts{
     <script src="~/dashboard/plugins/summernote/summernote-bs5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.css">
 
     <script>
-        $(function() {
+        $(function () {
             $('#summernote').summernote({
                 minHeight: 200
             })
             $('#text').summernote({
                 minHeight: 200
             })
-        })
+        });
+
+        $(document).ready(function () {
+            // Initialize the Cropper.js plugin
+            var cropper;
+            $('#Image').change(function () {
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#cropped-image').attr('src', e.target.result);
+                        // Initialize Cropper.js on the image
+                        cropper = new Cropper(document.getElementById('cropped-image'), {
+                            aspectRatio: 1, // Set the aspect ratio as needed
+                            viewMode: 2,   // Set the view mode as needed
+                        });
+                        $('.img-container').show();
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+
+            // Handle form submission
+            $('form').submit(function (e) {
+                e.preventDefault();
+
+                // Get the cropped data as a data URL
+                var croppedImageDataUrl = cropper.getCroppedCanvas().toDataURL();
+
+                // Set the data URL in the hidden input field
+                $('#CroppedImageData').val(croppedImageDataUrl);
+
+                // Continue with form submission
+                this.submit();
+            });
+        });
     </script>
 }                                       

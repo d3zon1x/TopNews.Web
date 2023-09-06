@@ -42,8 +42,15 @@ namespace TopNews.WebUI.Controllers
 
             if (validationResult.IsValid) 
             {
+                //byte[] fileBytes = Convert.FromBase64String(CroppedImageData);
+                //IFormFile croppedImageFile = new FormFile(new MemoryStream(fileBytes), 0, fileBytes.Length, "CroppedImage", "cropped-image.jpg");
+
+                // Create an IFormFileCollection and add the cropped image to it
+                //var formFiles = new FormFileCollection();
+                //formFiles.Add(croppedImageFile);
                 var files = HttpContext.Request.Form.Files;
                 model.File = files;
+                //model.File = formFiles;
                 await _postService.CreateAsync(model);
                 return RedirectToAction("Index", "Post");
             }
