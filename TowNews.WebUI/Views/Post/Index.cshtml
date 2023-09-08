@@ -68,7 +68,7 @@
                                         <div class="float-right mb-4">
                                             @if (@User.IsInRole("Administrator"))
                                             {
-                                            <a  asp-controller="Post" asp-action="Edit" asp-route-id="@item.Id" asp-route-slug="@item.Slug" class="btn btn-block btn-warning d-inline">Edit</a>
+                                            <a asp-controller="Post" asp-action="Edit" asp-route-id="@item.Id" asp-route-slug="@item.Slug" class="btn btn-block btn-warning d-inline">Edit</a>
                                             <a asp-controller="Post" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-block btn-danger d-inline">Delete</a>
                                             }
                                         </div>

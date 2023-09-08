@@ -42,7 +42,10 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="row no-gutters">
-
+                        <div class="card-header">
+                            
+                            <h5 class="card-title">@Html.Raw(item.Title)</h5>
+                        </div>
                         @*<div class="card">*@
                         @if (item.ImagePath == "Default.png")
                         {
@@ -53,8 +56,8 @@
                             <img class="card-img-top" src="~/images/posts/@item.ImagePath" alt="Photo">
                         }
                         <div class="card-body px-3">
-                            <h5 class="card-title">@Html.Raw(item.Title)</h5>
                             <p class="card-text">@Html.Raw(item.Description)</p>
+                            <p style="color:orange">@item.CategoryName</p>
                             <a asp-controller="Home" asp-route-slug="@item.Slug" asp-route-id="@item.Id" asp-action="ViewMore" class="btn btn-outline-secondary btn-sm">Read More</a>
                             @*</div>*@
                         </div>

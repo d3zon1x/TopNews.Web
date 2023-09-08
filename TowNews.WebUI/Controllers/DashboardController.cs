@@ -28,6 +28,8 @@ namespace TopNews.WebUI.Controllers
         [AllowAnonymous]// GET
         public IActionResult Login()
         {
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
             var user =  HttpContext.User.Identity.IsAuthenticated;
             if (user)
             {
@@ -40,6 +42,8 @@ namespace TopNews.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(UserLoginDTO model)
         {
+            
+
             var validator = new UserLoginValidation();
             var validationResult = validator.Validate(model);
             if (validationResult.IsValid)

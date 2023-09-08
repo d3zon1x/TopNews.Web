@@ -25,7 +25,7 @@ namespace TowNews.WebUI.Controllers
         public async Task<IActionResult> Index(int? page)
         {
             List<PostDTO> posts = await _postService.GetAll();
-            int pageSize = 20;
+            int pageSize = 2;
             int pageNumber = (page ?? 1);
             return View(posts.ToPagedList(pageNumber, pageSize));
         }
