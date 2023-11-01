@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  walter:
+    image: d3zon1x/TopNews.Web
+
+    ports:
+      - 80:80 # change ip if required
+    command: [
+        'dotnet-ef database update --startup-project "TopNews.Web" --project "TopNews.Infrastructure/TopNews.Infrastructure.csproj"',
+    ]
+    depends_on:
+      - db
+    links:
+      - db
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest # https://hub.docker.com/_/mysql/ - or mariadb https://hub.docker.com/_/mariadb
+    ports:
+      - 1433:1433 # change ip if required
+    environment:
+      MSSQL_SA_PASSWORD: "Qwerty-1"
+      ACCEPT_EULA: Y
