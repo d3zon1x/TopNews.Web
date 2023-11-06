@@ -14,7 +14,7 @@ RUN dotnet restore "TowNews.WebUI/TopNews.WebUI.csproj"
 RUN dotnet tool install -g dotnet-ef
 ENV PATH $PATH:/root/.dotnet/tools
 
-#RUN dotnet-ef database update --startup-project "TowNews.WebUI" --project "TopNews.Infrastructure/TopNews.Infrastructure.csproj"
+RUN dotnet-ef database update --startup-project "TowNews.WebUI" --project "TopNews.Infrastructure/TopNews.Infrastructure.csproj"
 
 RUN dotnet publish "TowNews.WebUI/TopNews.WebUI.csproj" -c Release -o /app/build
 WORKDIR /app/build
